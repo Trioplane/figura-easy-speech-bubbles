@@ -34,29 +34,17 @@ SpeechBubble.pivot = nil
 
 local speechBubble
 
-function events.chat_receive_message(raw, text)
+function pings.SpeechBubble_updateMessage(message) 
     if not player:isLoaded() then return end
-
-    local parsedText = parseJson(text)
-
-    if parsedText.extra ~= nil or parsedText.translate:find("command") then return end -- isCommandText?
-    if parsedText.translate:find("multiplayer") then return end -- isPlayerJoin?
-    if parsedText.translate:find("advancement") then return end -- isAdvancement?
-    if parsedText.translate:find("emote") then return end -- isSlashMe?
-    if parsedText.translate ~= "chat.type.text" then return end -- isNotChat? the final if to end it all
-    local sender
-    if parsedText.with[1].hoverEvent.contents.name ~= nil and parsedText.with[1].hoverEvent.contents.name == SpeechBubble.sender then
-        sender = parsedText.with[1].hoverEvent.contents.name
-    elseif parsedText.with[1].extra[1] ~= nil and parsedText.with[1].extra[1] == SpeechBubble.sender then 
-        sender = parsedText.with[1].extra[1]
-    elseif parsedText.with[1].extra[2] ~= nil and parsedText.with[1].extra[2] == SpeechBubble.sender then 
-        sender = parsedText.with[1].extra[2]
-    end
-    if not (sender == SpeechBubble.sender) then return end
     isDoneDisplaying = false
     rawMessage = ""
-    chatMessage = parsedText.with[2]
+    chatMessage = message
     stringIndex = 1
+end
+
+function events.chat_send_message(message)
+    pings.SpeechBubble_updateMessage(message)
+    return message
 end
 
 --- Runs when the speech bubble is displaying
@@ -76,15 +64,8 @@ local function get_text_position(text_message, text_width, text_scale)
     return final_y
   end
 
-function SpeechBubble:run() 
-    speechBubble = SpeechBubble.pivot:newText("SpeechBubble")
-        :setAlignment(SpeechBubble.textAlign)
-        :setScale(SpeechBubble.textScale)
-        :setWidth(SpeechBubble.textWidth)
-
-        function events.tick()
-            tick = tick + 1
-            if not isDoneDisplaying then SpeechBubble.displaying() end 
+function pings.SpeechBubble_updateSpeechBubble() 
+    if not isDoneDisplaying then SpeechBubble.displaying() end 
             if tick % SpeechBubble.textCharacterDisplayTime == 0 then
                 tick = 0
                 if not isDoneDisplaying then
@@ -117,6 +98,17 @@ function SpeechBubble:run()
             end
             speechBubble:setPos(0, get_text_position(speechBubbleMessage, SpeechBubble.textWidth, SpeechBubble.textScale), 0)
             speechBubble:setText(toJson(speechBubbleMessage))
+end
+
+function SpeechBubble:run() 
+    speechBubble = SpeechBubble.pivot:newText("SpeechBubble")
+        :setAlignment(SpeechBubble.textAlign)
+        :setScale(SpeechBubble.textScale)
+        :setWidth(SpeechBubble.textWidth)
+
+        function events.tick()
+            tick = tick + 1
+            pings.SpeechBubble_updateSpeechBubble()
         end
 end
 
