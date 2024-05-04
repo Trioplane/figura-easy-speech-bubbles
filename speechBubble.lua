@@ -47,21 +47,6 @@ function SpeechBubble.started_display() end
 --- Runs once when the speech bubble ended displaying
 function SpeechBubble.ended_display() end
 
-function pings.SpeechBubble_updateMessage(message)
-    if not player:isLoaded() then return end
-    isDoneDisplaying = false
-    rawMessage = ""
-    chatMessage = message
-    stringIndex = 1
-    newMessage = true
-    SpeechBubble.started_display()
-end
-
-function events.chat_send_message(message)
-    pings.SpeechBubble_updateMessage(message)
-    return message
-end
-
 local function get_text_position(text_message, text_width, text_scale)
     local textDimension = client.getTextDimensions(toJson(text_message), text_width, true)
 
@@ -72,41 +57,60 @@ local function get_text_position(text_message, text_width, text_scale)
     return final_y
 end
 
-function pings.SpeechBubble_updateSpeechBubble()
-        tick = 0
-        if not isDoneDisplaying then
-            rawMessage = rawMessage .. chatMessage:sub(stringIndex, stringIndex)
-            speechBubbleMessage = {
-                "",
-                {
-                    color = SpeechBubble.style.color,
-                    bold = SpeechBubble.style.bold,
-                    italic = SpeechBubble.style.italic,
-                    underlined = SpeechBubble.style.underline,
-                    strikethrough = SpeechBubble.style.strikethrough,
-                    obfuscated = SpeechBubble.style.obfuscated,
-                    text = rawMessage,
-                },
-            }
-            SpeechBubble.characterAdded(chatMessage:sub(stringIndex, stringIndex))
-            stringIndex = stringIndex + 1
-            if stringIndex > #chatMessage then
-                isDoneDisplaying = true
-            end
+local function updateSpeechBubble()
+    if not newMessage then return end
+    if tick % SpeechBubble.textCharacterDisplayTime ~= 0 then return end
+    tick = 0
+    if not isDoneDisplaying then
+        rawMessage = rawMessage .. chatMessage:sub(stringIndex, stringIndex)
+        speechBubbleMessage = {
+            "",
+            {
+                color = SpeechBubble.style.color,
+                bold = SpeechBubble.style.bold,
+                italic = SpeechBubble.style.italic,
+                underlined = SpeechBubble.style.underline,
+                strikethrough = SpeechBubble.style.strikethrough,
+                obfuscated = SpeechBubble.style.obfuscated,
+                text = rawMessage,
+            },
+        }
+        SpeechBubble.characterAdded(chatMessage:sub(stringIndex, stringIndex))
+        stringIndex = stringIndex + 1
+        if stringIndex > #chatMessage then
+            isDoneDisplaying = true
         end
-        if isDoneDisplaying then
-            speechBubbleClearWaitCount = speechBubbleClearWaitCount + 1
-            if speechBubbleClearWaitCount == SpeechBubble.clearWaitTime then
-                speechBubbleMessage = ""
-                speechBubbleClearWaitCount = 0
-                newMessage = false
-                SpeechBubble.ended_display()
-            end
+    end
+    if isDoneDisplaying then
+        speechBubbleClearWaitCount = speechBubbleClearWaitCount + 1
+        if speechBubbleClearWaitCount == SpeechBubble.clearWaitTime then
+            speechBubbleMessage = ""
+            speechBubbleClearWaitCount = 0
+            newMessage = false
+            SpeechBubble.ended_display()
+            events.tick:remove("updateSpeechBubble")
         end
+    end
     SpeechBubble.displaying()
     speechBubble:setPos(0,
         get_text_position(speechBubbleMessage, SpeechBubble.textWidth, SpeechBubble.textScale), 0)
     speechBubble:setText(toJson(speechBubbleMessage))
+end
+
+function pings.SpeechBubble_updateMessage(message)
+    if not player:isLoaded() then return end
+    isDoneDisplaying = false
+    rawMessage = ""
+    chatMessage = message
+    stringIndex = 1
+    newMessage = true
+    SpeechBubble.started_display()
+    events.tick:register(updateSpeechBubble, "updateSpeechBubble")
+end
+
+function events.chat_send_message(message)
+    pings.SpeechBubble_updateMessage(message)
+    return message
 end
 
 function SpeechBubble:run()
@@ -114,14 +118,6 @@ function SpeechBubble:run()
         :setAlignment(SpeechBubble.textAlign)
         :setScale(SpeechBubble.textScale)
         :setWidth(SpeechBubble.textWidth)
-
-    function events.tick()
-        if not newMessage then return end
-        tick = tick + 1
-        if tick % SpeechBubble.textCharacterDisplayTime == 0 then 
-            pings.SpeechBubble_updateSpeechBubble()
-        end
-    end
 end
 
 return SpeechBubble
