@@ -18,7 +18,7 @@ local speechBubbleClearWaitCount = 0
 local tick = 0
 SpeechBubble = {}
 SpeechBubble.clearWaitTime = 100
-SpeechBubble.textCharacterDisplayTime = 1
+SpeechBubble.textCharacterDisplayTime = 2
 SpeechBubble.textWidth = 100
 SpeechBubble.textAlign = "CENTER"
 SpeechBubble.textScale = 0.5
@@ -73,7 +73,6 @@ local function get_text_position(text_message, text_width, text_scale)
 end
 
 function pings.SpeechBubble_updateSpeechBubble()
-    if tick % SpeechBubble.textCharacterDisplayTime == 0 then
         tick = 0
         if not isDoneDisplaying then
             rawMessage = rawMessage .. chatMessage:sub(stringIndex, stringIndex)
@@ -104,7 +103,6 @@ function pings.SpeechBubble_updateSpeechBubble()
                 SpeechBubble.ended_display()
             end
         end
-    end
     SpeechBubble.displaying()
     speechBubble:setPos(0,
         get_text_position(speechBubbleMessage, SpeechBubble.textWidth, SpeechBubble.textScale), 0)
@@ -118,9 +116,11 @@ function SpeechBubble:run()
         :setWidth(SpeechBubble.textWidth)
 
     function events.tick()
-        tick = tick + 1
         if not newMessage then return end
-        pings.SpeechBubble_updateSpeechBubble()
+        tick = tick + 1
+        if tick % SpeechBubble.textCharacterDisplayTime == 0 then 
+            pings.SpeechBubble_updateSpeechBubble()
+        end
     end
 end
 
