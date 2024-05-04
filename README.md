@@ -9,10 +9,6 @@
 ```lua
 local SpeechBubble = require("speechBubble.lua") -- or whatever file path you chose
 
-SpeechBubble.sender = "YOUR_NAME" 
--- or use player:getName() in events.entity_init
--- make sure to put SpeechBubble:run() inside events.entity_init too if you do this.
-
 SpeechBubble.pivot = models.YourModelPart -- Sets where the speech bubble will appear
 SpeechBubble.style = { -- What the text will look like
   color = "valid hex code or vanilla color",

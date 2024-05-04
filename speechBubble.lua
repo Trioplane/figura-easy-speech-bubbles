@@ -29,7 +29,6 @@ SpeechBubble.style = {
     strikethrough = false,
     obfuscated = false,
 }
-SpeechBubble.sender = nil
 SpeechBubble.pivot = nil
 
 local speechBubble
