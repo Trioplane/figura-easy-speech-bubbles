@@ -3,6 +3,8 @@
 - Just chat things and it will appear!
 
 ## Usage:
+- Install `speechBubble.lua` and put it in your avatar
+
 - Setting up the speech bubble:
 ```lua
 local SpeechBubble = require("speechBubble.lua") -- or whatever file path you chose
