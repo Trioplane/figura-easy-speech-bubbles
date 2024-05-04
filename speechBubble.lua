@@ -29,9 +29,12 @@ SpeechBubble.style = {
     underlined = false,
     strikethrough = false,
     obfuscated = false,
+    background = vec(0, 0, 0, 0.5)
 }
+---@type ModelPart
 SpeechBubble.pivot = nil
 
+---@type ModelPart
 local speechBubble
 
 --- Runs when the speech bubble is displaying
@@ -60,37 +63,37 @@ end
 local function updateSpeechBubble()
     if not newMessage then return end
     if tick % SpeechBubble.textCharacterDisplayTime ~= 0 then return end
-    tick = 0
-    if not isDoneDisplaying then
-        rawMessage = rawMessage .. chatMessage:sub(stringIndex, stringIndex)
-        speechBubbleMessage = {
-            "",
-            {
-                color = SpeechBubble.style.color,
-                bold = SpeechBubble.style.bold,
-                italic = SpeechBubble.style.italic,
-                underlined = SpeechBubble.style.underline,
-                strikethrough = SpeechBubble.style.strikethrough,
-                obfuscated = SpeechBubble.style.obfuscated,
-                text = rawMessage,
-            },
-        }
-        SpeechBubble.characterAdded(chatMessage:sub(stringIndex, stringIndex))
-        stringIndex = stringIndex + 1
-        if stringIndex > #chatMessage then
-            isDoneDisplaying = true
+        tick = 0
+        if not isDoneDisplaying then
+            rawMessage = rawMessage .. chatMessage:sub(stringIndex, stringIndex)
+            speechBubbleMessage = {
+                "",
+                {
+                    color = SpeechBubble.style.color,
+                    bold = SpeechBubble.style.bold,
+                    italic = SpeechBubble.style.italic,
+                    underlined = SpeechBubble.style.underline,
+                    strikethrough = SpeechBubble.style.strikethrough,
+                    obfuscated = SpeechBubble.style.obfuscated,
+                    text = rawMessage,
+                },
+            }
+            SpeechBubble.characterAdded(chatMessage:sub(stringIndex, stringIndex))
+            stringIndex = stringIndex + 1
+            if stringIndex > #chatMessage then
+                isDoneDisplaying = true
+            end
         end
-    end
-    if isDoneDisplaying then
-        speechBubbleClearWaitCount = speechBubbleClearWaitCount + 1
-        if speechBubbleClearWaitCount == SpeechBubble.clearWaitTime then
-            speechBubbleMessage = ""
-            speechBubbleClearWaitCount = 0
-            newMessage = false
-            SpeechBubble.ended_display()
-            events.tick:remove("updateSpeechBubble")
+        if isDoneDisplaying then
+            speechBubbleClearWaitCount = speechBubbleClearWaitCount + 1
+            if speechBubbleClearWaitCount == SpeechBubble.clearWaitTime then
+                speechBubbleMessage = ""
+                speechBubbleClearWaitCount = 0
+                newMessage = false
+                SpeechBubble.ended_display()
+                events.tick:remove("updateSpeechBubble")
+            end
         end
-    end
     SpeechBubble.displaying()
     speechBubble:setPos(0,
         get_text_position(speechBubbleMessage, SpeechBubble.textWidth, SpeechBubble.textScale), 0)
@@ -118,6 +121,7 @@ function SpeechBubble:run()
         :setAlignment(SpeechBubble.textAlign)
         :setScale(SpeechBubble.textScale)
         :setWidth(SpeechBubble.textWidth)
+        :setBackgroundColor(SpeechBubble.style.background)
 end
 
 return SpeechBubble
