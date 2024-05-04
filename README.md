@@ -40,6 +40,16 @@ end
 function SpeechBubble.characterAdded(character) 
   -- code
 end
+
+-- Runs once when the speech bubble started displaying
+function SpeechBubble.started_displaying()
+  -- code
+end
+
+-- Runs once when the speech bubble ended displaying
+function SpeechBubble.ended_display()
+  -- code
+end
 ```
 
 ### Credits:
