@@ -34,6 +34,19 @@ SpeechBubble.pivot = nil
 
 local speechBubble
 
+--- Runs when the speech bubble is displaying
+function SpeechBubble.displaying() end
+
+--- Runs when a character gets added to the speech bubble
+--- @param character string
+function SpeechBubble.characterAdded(character) end
+
+--- Runs once when the speech bubble started displaying
+function SpeechBubble.started_display() end
+
+--- Runs once when the speech bubble ended displaying
+function SpeechBubble.ended_display() end
+
 function pings.SpeechBubble_updateMessage(message)
     if not player:isLoaded() then return end
     isDoneDisplaying = false
@@ -41,19 +54,13 @@ function pings.SpeechBubble_updateMessage(message)
     chatMessage = message
     stringIndex = 1
     newMessage = true
+    SpeechBubble.started_display()
 end
 
 function events.chat_send_message(message)
     pings.SpeechBubble_updateMessage(message)
     return message
 end
-
---- Runs when the speech bubble is displaying
-function SpeechBubble.displaying() end
-
---- Runs when a character gets added to the speech bubble
---- @param character string
-function SpeechBubble.characterAdded(character) end
 
 local function get_text_position(text_message, text_width, text_scale)
     local textDimension = client.getTextDimensions(toJson(text_message), text_width, true)
@@ -94,6 +101,7 @@ function pings.SpeechBubble_updateSpeechBubble()
                 speechBubbleMessage = ""
                 speechBubbleClearWaitCount = 0
                 newMessage = false
+                SpeechBubble.ended_display()
             end
         end
     end
