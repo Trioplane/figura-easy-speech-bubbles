@@ -2,8 +2,6 @@
 - Lets you add easy to use, and configurable speech bubble to your avatar!
 - Just chat things and it will appear!
 
-# This doesn't work on multiplayer and is basically useless, working on fixing it
-
 ## Usage:
 - Setting up the speech bubble:
 ```lua
