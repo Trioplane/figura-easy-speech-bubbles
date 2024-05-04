@@ -13,6 +13,7 @@ local speechBubbleMessage = ""
 local rawMessage = ""
 local stringIndex = 1
 local isDoneDisplaying = true
+local newMessage = false
 local speechBubbleClearWaitCount = 0
 local tick = 0
 SpeechBubble = {}
@@ -39,6 +40,7 @@ function pings.SpeechBubble_updateMessage(message)
     rawMessage = ""
     chatMessage = message
     stringIndex = 1
+    newMessage = true
 end
 
 function events.chat_send_message(message)
@@ -64,7 +66,6 @@ local function get_text_position(text_message, text_width, text_scale)
 end
 
 function pings.SpeechBubble_updateSpeechBubble()
-    if not isDoneDisplaying then SpeechBubble.displaying() end
     if tick % SpeechBubble.textCharacterDisplayTime == 0 then
         tick = 0
         if not isDoneDisplaying then
@@ -92,9 +93,11 @@ function pings.SpeechBubble_updateSpeechBubble()
             if speechBubbleClearWaitCount == SpeechBubble.clearWaitTime then
                 speechBubbleMessage = ""
                 speechBubbleClearWaitCount = 0
+                newMessage = false
             end
         end
     end
+    SpeechBubble.displaying()
     speechBubble:setPos(0,
         get_text_position(speechBubbleMessage, SpeechBubble.textWidth, SpeechBubble.textScale), 0)
     speechBubble:setText(toJson(speechBubbleMessage))
@@ -108,7 +111,7 @@ function SpeechBubble:run()
 
     function events.tick()
         tick = tick + 1
-        if isDoneDisplaying then return end
+        if not newMessage then return end
         pings.SpeechBubble_updateSpeechBubble()
     end
 end
