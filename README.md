@@ -1,6 +1,7 @@
 # Easy Speech Bubbles
 - Lets you add easy to use, and configurable speech bubble to your avatar!
 - Just chat things and it will appear!
+- Got this idea because of @poompkin's speech bubble :) ty!
 
 ## Usage:
 - Install `speechBubble.lua` and put it in your avatar
@@ -16,7 +17,8 @@ SpeechBubble.style = { -- What the text will look like
   italic = false,
   underlined = false,
   strikethrough = false,
-  obfuscated = false -- why would you make this true
+  obfuscated = false, -- why would you make this true
+  background = vec(r, g, b, a)
 }
 SpeechBubble.textWidth = 100 -- Sets the width of the speech bubble, making it wrap
 SpeechBubble.textAlign = "CENTER" -- "CENTER" | "LEFT" | "RIGHT"
