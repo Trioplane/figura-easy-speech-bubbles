@@ -18,7 +18,8 @@ SpeechBubble.style = { -- What the text will look like
   underlined = false,
   strikethrough = false,
   obfuscated = false, -- why would you make this true
-  background = vec(r, g, b, a)
+  background = vec(r, g, b, a),
+  billboardCenter = false -- Makes the speech bubble follow the camera.
 }
 SpeechBubble.textWidth = 100 -- Sets the width of the speech bubble, making it wrap
 SpeechBubble.textAlign = "CENTER" -- "CENTER" | "LEFT" | "RIGHT"
