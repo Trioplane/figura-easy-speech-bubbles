@@ -4,7 +4,7 @@
 -- trplnr - Main Developer
 --
 -- Additional Help:
--- manuel_2867 - Config Help, letting me know that chat_send_message doesn't work
+-- manuel_2867 - Config Help, letting me know that chat_send_message doesn't work, nevermind i managed to make it work
 -- grandpa_scout - Minor error help
 -- pencilvoid - Letting me know about TextTasks
 
@@ -22,6 +22,7 @@ SpeechBubble.textCharacterDisplayTime = 2
 SpeechBubble.textWidth = 100
 SpeechBubble.textAlign = "CENTER"
 SpeechBubble.textScale = 0.5
+SpeechBubble.hideWhenUsingCommands = true
 SpeechBubble.style = {
     color = "white",
     bold = false,
@@ -118,6 +119,7 @@ function pings.SpeechBubble_updateMessage(message)
 end
 
 function events.chat_send_message(message)
+    if SpeechBubble.hideWhenUsingCommands and message:sub(1,1) == "/" then return message end
     pings.SpeechBubble_updateMessage(message)
     return message
 end
