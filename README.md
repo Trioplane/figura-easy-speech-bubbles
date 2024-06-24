@@ -4,7 +4,7 @@
 - Got this idea because of @poompkin's speech bubble :) ty!
 
 ## Usage:
-- Install `speechBubble.lua` and put it in your avatar
+- Go to releases and install `speechBubble.lua` and put it in your avatar
 
 - Setting up the speech bubble:
 ```lua
